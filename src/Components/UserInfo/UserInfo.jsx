@@ -17,56 +17,88 @@ const UserInfo = () => {
     // console.log(search);
   }
 
-  const getInfoName = new Promise((resolve, rej) => {
+  // const getInfoName = async () => {
+  //   if(search){
+  //   const data = await  axios.get(`${urlAge}${search}`)
 
-    if(search){
-      axios.get(`${urlAge}${search}`)
-      // .then((res) => res.json())
-      .then((resp) => {
-        resolve(resp.data)
-        // console.log(resp.data)
-      })
-      .catch((err) => {
-        console.log(err.message)
-      })
+  //       return  data.data;
+
+  //     // })
+  //     // .catch((err) => {
+  //     //   console.log(err.message);
+  //     // })
+  //   }
+  // }
+
+  // const getGender = new Promise((resolve, rej) => {
+  //   if(search){
+  //   fetch(`${urlGender}${search}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       resolve(data)
+  //     })
+  //     .catch((error) => {
+  //       setError(error)
+  //     })
+  //   }
+  // })
+
+
+  // =====================
+
+  const getResourse = async (url) => {
+
+    try {
+      const res = await axios.get(url);
+      return await res.data;
+    } catch (err) {
+      console.log(err);
+      throw new Error(`!!!!!!!!! ${err}`);
     }
+  };
 
-  })
-
-  const getGender = new Promise((resolve, rej) => {
+  const getUserNameAge = async () => {
     if(search){
-    fetch(`${urlGender}${search}`)
-      .then((res) => res.json())
-      .then((data) => {
-        resolve(data)
-      })
-      .catch((error) => {
-        setError(error)
-      })
+      const data = await getResourse(`${urlAge}${search}`);
+    return data;
     }
-  })
+  };
 
-  const getNational = new Promise((resolve, rej) => {
+  const getGender = async () => {
     if(search){
-    fetch(`${urlNationalize}${search}`)
-      .then((res) => res.json())
-      .then((data) => {
-        resolve(data)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+      const data = await getResourse(`${urlGender}${search}`);
+      return data;
     }
-  })
+  }
+
+  const getNational = async () => {
+    const data = await getResourse(`${urlNationalize}${search}`);
+    return data;
+  }
+
+  // const getNational = new Promise((resolve, rej) => {
+  //   if(search){
+  //   fetch(`${urlNationalize}${search}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       resolve(data)
+  //     })
+  //     .catch((error) => {
+  //       console.log(error)
+  //     })
+  //   }
+  // })
 
   const allPromise = () => {
-    Promise.all([getInfoName, getGender, getNational]).then((value) => {
+    Promise.all([getUserNameAge(), getGender(), getNational()]).then((value) => {
       setNameValue(value[0]);
       setGender(value[1]);
       setNational(value[2].country[0])
     })
     setSearch('');
   }
+
+
 
   return (
     <div>
@@ -81,8 +113,8 @@ const UserInfo = () => {
         <button onClick={allPromise}>Search</button>
       </div>
 
-      <div>Name: {nameValue.name}</div>
-      <div>Age: {nameValue.age}</div>
+      <div>Name: {nameValue.name} </div>
+      <div>Age: {nameValue.age}  </div>
       <div>Gender: {gender.gender}</div>
       <div>Nationalize: {national.country_id} </div>
     </div>
